@@ -69,6 +69,8 @@ jobs:
         export BASE_PROPERTY_ID=2018000006
         export PROPERTY_ID=$(($BASE_PROPERTY_ID + ${{ matrix.offset }}))
         echo ${{ matrix.offset }} $BASE_PROPERTY_ID $PROPERTY_ID
+        pwd
+        ls
         scrapy crawl sale -a id=$PROPERTY_ID
 
 # conclude
