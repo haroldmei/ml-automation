@@ -46,7 +46,7 @@ jobs:
       with:
         repository: "haroldmei/webscrapers"
         token: ${{ secrets.PRIVATE_SSH_KEY }}
-        path: "/home/runner/work/ml-automation/ml-automation/webscrapers"
+        path: "/home/runner/work/ml-automation/webscrapers"
 
     - uses: actions/setup-python@v5
       with:
