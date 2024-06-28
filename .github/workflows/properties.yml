@@ -35,7 +35,7 @@ jobs:
     needs: gen_intarray
     strategy:
       matrix:
-        fid: ${{ fromJSON(needs.gen_intarray.outputs.intarray) }}
+        offset: ${{ fromJSON(needs.gen_intarray.outputs.intarray) }}
     
     runs-on: ubuntu-latest
     permissions:
