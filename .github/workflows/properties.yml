@@ -1,0 +1,73 @@
+# This is a basic workflow that is manually triggered
+name: Properties collector
+
+on:
+  workflow_dispatch:
+    inputs:
+      startid:
+        description: "startid is the first property id to be collected"
+        default: 2019000000
+        required: true
+        type: int
+      endid:
+        description: 'endid-1 is the last property id to be collected'
+        default: 2019400000
+        required: true
+        type: int
+
+jobs:
+  gen_intarray:
+    outputs:
+      intarray: ${{ steps.intarray.outputs.intarray }}
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: generate int array
+      id: intarray
+      run: |
+        export INT_ARRAY="[$(seq 0 1 100 | sed -z 's/\n/, /g' | sed 's/..$//')]"
+        echo intarray=$INT_ARRAY >> "$GITHUB_OUTPUT"
+        cat "$GITHUB_OUTPUT"
+
+  scrape:
+    needs: gen_intarray
+    strategy:
+      matrix:
+        fid: ${{ fromJSON(needs.gen_intarray.outputs.intarray) }}
+    
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Python dependencies
+      run: python -m pip install --upgrade pip pandas pandas_gbq pytube requests joblib
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
+
+    - uses: google-github-actions/setup-gcloud@v2
+    - name: Run gcloud
+      run: |
+        gcloud compute instances list
+        gsutil -i sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com ls gs://hmei-bucket
+
+    - name: execute py script
+      run: |
+        echo ${{ matrix.offset }}
+        #scrapy crawl sale -a id=2018000006
+
+# conclude
+  conclude:
+    needs: scrape
+    runs-on: ubuntu-latest
+    steps:
+    - name: Conclude here
+      run: lscpu; lsmem; echo "Finished scraping ${{ inputs.youtuber }}:${{ inputs.channel }}"
