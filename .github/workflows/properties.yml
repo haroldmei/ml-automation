@@ -42,14 +42,10 @@ jobs:
       contents: 'read'
       id-token: 'write'
     steps:
-    - name: Checkout repo
-      run: echo ${{ secrets.PRIVATE_SSH_KEY }}
-    
-    - name: Checkout webscrapers repo
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
       with:
         repository: "haroldmei/webscrapers"
-        ssh-key: ${{ secrets.PRIVATE_SSH_KEY }}
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
         path: "./"
 
     - uses: actions/setup-python@v5
