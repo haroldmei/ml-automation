@@ -71,6 +71,7 @@ jobs:
         echo ${{ matrix.offset }} $BASE_PROPERTY_ID $PROPERTY_ID
         cd sales_details
         scrapy crawl sale -a id=$PROPERTY_ID
+        # printf '%s\n' scrapy\ crawl\ sale\ -a\ id={2018000010..2018000030} | parallel --pipe -N 1 bash
 
 # conclude
   conclude:
