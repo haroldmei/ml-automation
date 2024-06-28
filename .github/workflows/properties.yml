@@ -27,7 +27,7 @@ jobs:
     - name: generate int array
       id: intarray
       run: |
-        export INT_ARRAY="[$(seq 0 1 100 | sed -z 's/\n/, /g' | sed 's/..$//')]"
+        export INT_ARRAY="[$(seq 0 1 5 | sed -z 's/\n/, /g' | sed 's/..$//')]"
         echo intarray=$INT_ARRAY >> "$GITHUB_OUTPUT"
         cat "$GITHUB_OUTPUT"
 
