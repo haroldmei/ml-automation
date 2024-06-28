@@ -45,7 +45,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         repository: "haroldmei/webscrapers"
-        token: ${{ secrets.PRIVATE_SSH_KEY }}
+        ssh-key: ${{ secrets.PRIVATE_SSH_KEY }}
         path: "./"
 
     - uses: actions/setup-python@v5
