@@ -46,7 +46,6 @@ jobs:
       with:
         repository: "haroldmei/webscrapers"
         token: ${{ secrets.PRIVATE_SSH_KEY }}
-        #path: "/home/runner/work/ml-automation/webscrapers"
 
     - uses: actions/setup-python@v5
       with:
@@ -66,8 +65,8 @@ jobs:
 
     - name: execute py script
       run: |
-        export BASE_PROPERTY_ID=2018000006
-        export PROPERTY_ID=$(($BASE_PROPERTY_ID + ${{ matrix.offset }}))
+        export BASE_PROPERTY_ID=${{ inputs.startid }}
+        export PROPERTY_ID=$(($BASE_PROPERTY_ID + ${{ matrix.offset }}*10000))
         echo ${{ matrix.offset }} $BASE_PROPERTY_ID $PROPERTY_ID
         cd sales_details
         scrapy crawl sale -a id=$PROPERTY_ID
