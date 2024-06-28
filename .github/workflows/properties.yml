@@ -43,10 +43,10 @@ jobs:
       id-token: 'write'
     steps:
     - name: Checkout repo
-    - uses: actions/checkout@v4
+      uses: actions/checkout@v4
     
     - name: Checkout webscrapers repo
-    - uses: actions/checkout@v4
+      uses: actions/checkout@v4
       with:
         repository: "haroldmei/webscrapers"
         ssh-key: ${{ secrets.PRIVATE_SSH_KEY }}
