@@ -78,7 +78,8 @@ jobs:
         export LAST_PROPERTY_ID=$(($PROPERTY_ID + ${{ inputs.chunksize }}))
         echo ${{ matrix.offset }} ${{ inputs.chunksize }} $BASE_PROPERTY_ID $PROPERTY_ID $LAST_PROPERTY_ID
         cd sales_details
-        printf '%s\n' scrapy\ crawl\ sale\ -a\ id={$PROPERTY_ID..$LAST_PROPERTY_ID} | parallel --pipe -N 1 bash
+        printf '%s\n' scrapy\ crawl\ sale\ -a\ id={$PROPERTY_ID..$LAST_PROPERTY_ID}
+        #printf '%s\n' scrapy\ crawl\ sale\ -a\ id={$PROPERTY_ID..$LAST_PROPERTY_ID} | parallel --pipe -N 1 bash
     
     - name: save results
       run: |
