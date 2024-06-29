@@ -84,8 +84,8 @@ jobs:
       run: |
         cd sales_details
         export FOLDER_NAME=${{ inputs.startid }}-${{ inputs.endid }}
-        gsutil -m cp -r outputs gs://hmei-bucket/data/domain/outputs/$FOLDER_NAME
-        gsutil -m cp -r images gs://hmei-bucket/data/domain/images/$FOLDER_NAME
+        gsutil -m cp -r outputs/* gs://hmei-bucket/data/domain/outputs/$FOLDER_NAME
+        gsutil -m cp -r images/* gs://hmei-bucket/data/domain/images/$FOLDER_NAME
 
 # conclude
   conclude:
