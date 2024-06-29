@@ -59,7 +59,6 @@ jobs:
     - name: Install Packages and Python dependencies
       run: |
         python -m pip install --upgrade pip pandas pandas_gbq pytube requests joblib scrapy
-        sudo apt install parallel -y
     - uses: 'google-github-actions/auth@v2'
       with:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
@@ -78,8 +77,7 @@ jobs:
         export LAST_PROPERTY_ID=$(($PROPERTY_ID + ${{ inputs.chunksize }}))
         echo ${{ matrix.offset }} ${{ inputs.chunksize }} $BASE_PROPERTY_ID $PROPERTY_ID $LAST_PROPERTY_ID
         cd sales_details
-        printf '%s\n' scrapy\ crawl\ sale\ -a\ id={$PROPERTY_ID..$LAST_PROPERTY_ID}
-        #printf '%s\n' scrapy\ crawl\ sale\ -a\ id={$PROPERTY_ID..$LAST_PROPERTY_ID} | parallel --pipe -N 1 bash
+        eval "printf '%s\n' scrapy\ crawl\ sale\ -a\ id={$PROPERTY_ID..$LAST_PROPERTY_ID}" | parallel --pipe -N 1 bash
     
     - name: save results
       run: |
