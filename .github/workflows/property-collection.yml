@@ -93,4 +93,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Conclude here
-      run: lscpu; lsmem; echo "Finished scraping ${{ inputs.youtuber }}:${{ inputs.channel }}"
+      run: lscpu; lsmem; echo "Finished scraping ${{ inputs.startid }} ${{ inputs.endid }} ${{ inputs.chunksize }}"
