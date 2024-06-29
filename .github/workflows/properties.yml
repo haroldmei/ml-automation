@@ -6,7 +6,7 @@ on:
     inputs:
       startid:
         description: "startid is the first property id to be collected"
-        default: 2019300000
+        default: 2019350000
         required: true
         type: int
       endid:
@@ -16,7 +16,7 @@ on:
         type: int
       chunksize:
         description: 'chunksize is the number of ids to be processed by each job'
-        default: 5000
+        default: 2000
         required: true
         type: int
 
@@ -82,8 +82,8 @@ jobs:
     - name: save results
       run: |
         cd sales_details
-        gsutil -m cp -r outputs gs://hmei-bucket/data/
-        gsutil -m cp -r images gs://hmei-bucket/data/
+        gsutil -m cp -r outputs/* gs://hmei-bucket/data/domain/outputs/
+        gsutil -m cp -r images/* gs://hmei-bucket/data/domain/images/
 
 # conclude
   conclude:
