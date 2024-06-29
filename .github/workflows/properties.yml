@@ -6,7 +6,7 @@ on:
     inputs:
       startid:
         description: "startid is the first property id to be collected"
-        default: 2019000000
+        default: 2019300000
         required: true
         type: int
       endid:
@@ -76,8 +76,13 @@ jobs:
         export LAST_PROPERTY_ID=$(($PROPERTY_ID + ${{ inputs.chunksize }}))
         echo ${{ matrix.offset }} ${{ inputs.chunksize }} $BASE_PROPERTY_ID $PROPERTY_ID $LAST_PROPERTY_ID
         cd sales_details
-        # scrapy crawl sale -a id=$PROPERTY_ID
-        # printf '%s\n' scrapy\ crawl\ sale\ -a\ id={2018000010..2018000030} | parallel --pipe -N 1 bash
+        printf '%s\n' scrapy\ crawl\ sale\ -a\ id={$PROPERTY_ID..$LAST_PROPERTY_ID} | parallel --pipe -N 1 bash
+    
+    - name: save results
+      run: |
+        cd sales_details
+        gsutil -m cp -r outputs gs://hmei-bucket/data/
+        gsutil -m cp -r images gs://hmei-bucket/data/
 
 # conclude
   conclude:
