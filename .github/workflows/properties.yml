@@ -14,6 +14,11 @@ on:
         default: 2019400000
         required: true
         type: int
+      chunksize:
+        description: 'chunksize is the number of ids to be processed by each job'
+        default: 5000
+        required: true
+        type: int
 
 jobs:
   gen_intarray:
@@ -27,7 +32,8 @@ jobs:
     - name: generate int array
       id: intarray
       run: |
-        export INT_ARRAY="[$(seq 0 1 5 | sed -z 's/\n/, /g' | sed 's/..$//')]"
+        export NUMBER_CHUNKS=$(((${{ inputs.endid }} - ${{ inputs.startid }}) / ${{ inputs.chunksize }}))
+        export INT_ARRAY="[$(seq 0 1 $NUMBER_CHUNKS | sed -z 's/\n/, /g' | sed 's/..$//')]"
         echo intarray=$INT_ARRAY >> "$GITHUB_OUTPUT"
         cat "$GITHUB_OUTPUT"
 
@@ -66,10 +72,11 @@ jobs:
     - name: execute py script
       run: |
         export BASE_PROPERTY_ID=${{ inputs.startid }}
-        export PROPERTY_ID=$(($BASE_PROPERTY_ID + ${{ matrix.offset }}*10000))
-        echo ${{ matrix.offset }} $BASE_PROPERTY_ID $PROPERTY_ID
+        export PROPERTY_ID=$(($BASE_PROPERTY_ID + ${{ matrix.offset }}*${{ inputs.chunksize }}))
+        export LAST_PROPERTY_ID=$(($PROPERTY_ID + ${{ inputs.chunksize }}))
+        echo ${{ matrix.offset }} ${{ inputs.chunksize }} $BASE_PROPERTY_ID $PROPERTY_ID $LAST_PROPERTY_ID
         cd sales_details
-        scrapy crawl sale -a id=$PROPERTY_ID
+        # scrapy crawl sale -a id=$PROPERTY_ID
         # printf '%s\n' scrapy\ crawl\ sale\ -a\ id={2018000010..2018000030} | parallel --pipe -N 1 bash
 
 # conclude
