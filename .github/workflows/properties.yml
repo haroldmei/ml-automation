@@ -16,7 +16,7 @@ on:
         type: int
       chunksize:
         description: 'chunksize is the number of ids to be processed by each job'
-        default: 2000
+        default: 2500
         required: true
         type: int
 
