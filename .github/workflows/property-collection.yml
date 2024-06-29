@@ -80,7 +80,7 @@ jobs:
         #eval "printf '%s\n' scrapy\ crawl\ sale\ -a\ id={$PROPERTY_ID..$LAST_PROPERTY_ID}\ -L\ WARNING" | parallel --pipe -N 1 bash
         echo $(seq $PROPERTY_ID 1 $LAST_PROPERTY_ID) | sed 's/ /\n/g' | parallel -v scrapy crawl sale -a id={} -L WARNING
     
-    - name: save and aggregate results
+    - name: save and aggregate results, then load to BQ
       run: |
         export FOLDER_NAME=${{ inputs.startid }}-${{ inputs.endid }}
         gsutil -m cp -r sales_details/outputs/* gs://hmei-bucket/data/domain.com.au/outputs/$FOLDER_NAME
