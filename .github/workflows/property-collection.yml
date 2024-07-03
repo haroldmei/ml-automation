@@ -84,8 +84,8 @@ jobs:
     - name: save and aggregate results, then load to BQ
       run: |
         export FOLDER_NAME=${{ inputs.startid }}-${{ inputs.endid }}
-        tar -czf $FOLDER_NAME.tar.gz sales_details/outputs
-        gsutil cp $FOLDER_NAME.tar.gz gs://hmei-bucket-us/data/domain.com.au/outputs
+        tar -czf $FOLDER_NAME.tar.gz sales_details/images
+        gsutil cp $FOLDER_NAME.tar.gz gs://hmei-bucket-us/data/domain.com.au/images
         python utils/pickle_bq.py
 
 # conclude
