@@ -43,8 +43,8 @@ jobs:
       matrix:
         offset: ${{ fromJSON(needs.gen_intarray.outputs.intarray) }}
     
-    #runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    #runs-on: self-hosted
     permissions:
       contents: 'read'
       id-token: 'write'
