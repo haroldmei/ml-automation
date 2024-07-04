@@ -72,6 +72,7 @@ jobs:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
+    - uses: google-github-actions/setup-gcloud@v2
     - name: execute py script, download yf data
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
@@ -107,6 +108,7 @@ jobs:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
+    - uses: google-github-actions/setup-gcloud@v2
     - name: execute py script, download yf data
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
@@ -142,6 +144,7 @@ jobs:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
+    - uses: google-github-actions/setup-gcloud@v2
     - name: execute py script, download yf data
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
