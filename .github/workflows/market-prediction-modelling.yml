@@ -27,7 +27,7 @@ jobs:
         python-version: '3.10' 
     - name: Install Packages and Python dependencies
       run: |
-        python -m pip install --upgrade pip pandas joblib yfinance matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
     - uses: 'google-github-actions/auth@v2'
       with:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
@@ -35,11 +35,11 @@ jobs:
 
     - name: execute py script, download yf data
       run: |
-        wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
-        tar -xzf ta-lib-0.4.0-src.tar.gz
-        cd ta-lib/ && ./configure && make && sudo make install
-        pip install ta-lib
-        cd ..
+        # wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+        # tar -xzf ta-lib-0.4.0-src.tar.gz
+        # cd ta-lib/ && ./configure && make && sudo make install
+        # pip install ta-lib
+        # cd ..
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python etl/yf.py
     
@@ -65,7 +65,7 @@ jobs:
         python-version: '3.10' 
     - name: Install Packages and Python dependencies
       run: |
-        python -m pip install --upgrade pip pandas joblib yfinance matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
     - uses: 'google-github-actions/auth@v2'
       with:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
@@ -100,7 +100,7 @@ jobs:
         python-version: '3.10' 
     - name: Install Packages and Python dependencies
       run: |
-        python -m pip install --upgrade pip pandas joblib yfinance matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
     - uses: 'google-github-actions/auth@v2'
       with:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
@@ -135,7 +135,7 @@ jobs:
         python-version: '3.10' 
     - name: Install Packages and Python dependencies
       run: |
-        python -m pip install --upgrade pip pandas joblib yfinance matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
     - uses: 'google-github-actions/auth@v2'
       with:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
