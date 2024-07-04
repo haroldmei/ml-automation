@@ -37,7 +37,7 @@ jobs:
       run: |
         wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
         tar -xzf ta-lib-0.4.0-src.tar.gz
-        cd ta-lib/ && ./configure && make && make install
+        cd ta-lib/ && ./configure && make && sudo make install
         pip install ta-lib
         cd ..
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
