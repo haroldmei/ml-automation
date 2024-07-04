@@ -1,0 +1,155 @@
+# This is a basic workflow that is manually triggered
+name: Stock market prediction modelling
+
+on:
+  workflow_dispatch:
+    inputs:
+      parameter_1:
+        description: "parameter_1 is the first property id to be collected"
+        default: 0
+        required: true
+        type: int
+
+jobs:
+  yf-colloction:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas joblib yfinance
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
+
+    - name: execute py script, download yf data
+      run: |
+        python etl/yf.py
+    
+    - name: save and aggregate results, then load to BQ
+      run: |
+        tar -czf output.tar.gz output/
+        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+
+  feature-engineering-1:
+    needs: yf-colloction
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas pandas_gbq pytube requests joblib scrapy
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
+
+    - name: execute py script, download yf data
+      run: |
+        gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
+        tar -xzf output.tar.gz ./
+        python features/fe_v1.py
+    
+    - name: save and aggregate results, then load to BQ
+      run: |
+        tar -czf output.tar.gz output/
+        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+
+  feature-engineering-2:
+    needs: yf-colloction
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas pandas_gbq pytube requests joblib scrapy
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
+
+    - name: execute py script, download yf data
+      run: |
+        gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
+        tar -xzf output.tar.gz ./
+        python features/fe_v2.py
+    
+    - name: save and aggregate results, then load to BQ
+      run: |
+        tar -czf output.tar.gz output/
+        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+
+  modelling-lgbm:
+    needs: [feature-engineering-1, feature-engineering-2]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas pandas_gbq pytube requests joblib scrapy
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
+
+    - name: execute py script, download yf data
+      run: |
+        gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
+        tar -xzf output.tar.gz ./
+        python models/lgbm.py --cv
+        python models/lgbm.py --epochs=50
+        python models/lgbm.py --pred
+
+    - name: save and aggregate results, then load to BQ
+      run: |
+        tar -czf output.tar.gz output/
+        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+
+# conclude
+  conclude:
+    needs: modelling-lgbm
+    runs-on: ubuntu-latest
+    steps:
+    - name: Conclude here
+      run: lscpu; lsmem; echo "Finished scraping ${{ inputs.parameter_1 }}"
