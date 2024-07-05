@@ -1,7 +1,4 @@
 name: "Checkout stock-market-prediction and auth GCP"
-inputs:
-  PRIVATE_SSH_KEY:
-    required: true
 runs:
   using: "composite" # <-- this is the important part
   steps:
