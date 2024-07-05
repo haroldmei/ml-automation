@@ -72,7 +72,7 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    - name: execute py script, download yf data
+    - name: execute py script, feature-engineering-1
       run: |
         wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
         tar -xzf ta-lib-0.4.0-src.tar.gz
@@ -113,7 +113,7 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    - name: execute py script, download yf data
+    - name: execute py script, feature-engineering-2
       run: |
         wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
         tar -xzf ta-lib-0.4.0-src.tar.gz
@@ -154,7 +154,7 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    - name: execute py script, download yf data
+    - name: execute py script, modelling-lgbm
       run: |
         wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
         tar -xzf ta-lib-0.4.0-src.tar.gz
