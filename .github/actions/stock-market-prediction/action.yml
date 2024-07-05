@@ -1,4 +1,7 @@
 name: "Checkout stock-market-prediction and auth GCP"
+inputs:
+  PRIVATE_SSH_KEY:
+    required: true
 runs:
   using: "composite" # <-- this is the important part
   steps:
@@ -8,7 +11,7 @@ runs:
   - uses: actions/checkout@v4
     with:
       repository: "haroldmei/stock-market-prediction"
-      token: ${{ secrets.PRIVATE_SSH_KEY }}
+      token: ${{ inputs.PRIVATE_SSH_KEY }}
     shell: bash
 
   - uses: actions/setup-python@v5
