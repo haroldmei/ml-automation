@@ -28,6 +28,7 @@ jobs:
         color: ${{ fromJSON(needs.define-matrix.outputs.colors) }}
 
     steps:
+      - uses: ./.github/actions/my-shared-steps
       - name: Define Color
         env:
           color: ${{ matrix.color }}
