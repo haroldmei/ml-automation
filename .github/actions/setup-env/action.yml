@@ -6,19 +6,15 @@ runs:
       shell: bash
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.10' 
-      shell: bash
+        python-version: '3.10'
 
     - name: Install Packages and Python dependencies
       run: |
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
-      shell: bash
 
     - uses: 'google-github-actions/auth@v2'
       with:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
-      shell: bash
-    
+
     - uses: google-github-actions/setup-gcloud@v2
-      shell: bash
