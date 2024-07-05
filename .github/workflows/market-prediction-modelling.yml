@@ -76,7 +76,7 @@ jobs:
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
-        tar -xf output.tar.gz ./
+        tar xf output.tar.gz ./
         python features/fe_v1.py
     
     - name: save and aggregate results, then load to cloud
@@ -112,7 +112,7 @@ jobs:
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
-        tar -xf output.tar.gz ./
+        tar xf output.tar.gz ./
         python features/fe_v2.py
     
     - name: save and aggregate results, then load to cloud
@@ -148,7 +148,7 @@ jobs:
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
-        tar -xf output.tar.gz ./
+        tar xf output.tar.gz ./
         python models/lgbm.py --cv
         python models/lgbm.py --epochs=50
         python models/lgbm.py --pred
