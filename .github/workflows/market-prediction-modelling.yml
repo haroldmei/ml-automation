@@ -72,6 +72,12 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
+    
+    - name: install talib
+      run: |
+        wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+        tar -xzf ta-lib-0.4.0-src.tar.gz
+        cd ta-lib/ && sudo ./configure && sudo make && sudo make install && pip install ta-lib && cd ..
     - name: execute py script, feature-engineering-1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
@@ -144,12 +150,6 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    
-    - name: install talib
-      run: |
-        wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
-        tar -xzf ta-lib-0.4.0-src.tar.gz
-        cd ta-lib/ && sudo ./configure && sudo make && sudo make install && pip install ta-lib && cd ..
     - name: execute py script, feature-engineering-2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
