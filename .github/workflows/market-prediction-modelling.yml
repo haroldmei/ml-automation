@@ -78,7 +78,7 @@ jobs:
         wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
         tar -xzf ta-lib-0.4.0-src.tar.gz
         cd ta-lib/ && sudo ./configure && sudo make && sudo make install && pip install ta-lib && cd ..
-    - name: execute py script, feature-engineering-1
+    - name: execute py script, feature-engineering-ta
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
