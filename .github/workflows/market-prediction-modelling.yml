@@ -11,7 +11,7 @@ on:
         type: int
 
 jobs:
-  yf-colloction:
+  s1-yf-ingest:
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -48,8 +48,8 @@ jobs:
         tar -czf output.tar.gz output/
         gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
 
-  feature-engineering-ta:
-    needs: yf-colloction
+  s2-fe-ta:
+    needs: s1-yf-ingest
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -78,7 +78,7 @@ jobs:
         wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
         tar -xzf ta-lib-0.4.0-src.tar.gz
         cd ta-lib/ && sudo ./configure && sudo make && sudo make install && pip install ta-lib && cd ..
-    - name: execute py script, feature-engineering-ta
+    - name: execute py script, s2-fe-ta
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
@@ -90,8 +90,8 @@ jobs:
         tar -czf output.tar.gz output/
         gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
 
-  feature-engineering-1:
-    needs: feature-engineering-ta
+  s3-fe-v1:
+    needs: s2-fe-ta
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -114,7 +114,7 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    - name: execute py script, feature-engineering-1
+    - name: execute py script, s3-fe-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
@@ -126,8 +126,8 @@ jobs:
         tar -czf output.tar.gz output/
         gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
 
-  feature-engineering-2:
-    needs: feature-engineering-ta
+  s3-fe-v2:
+    needs: s2-fe-ta
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -150,7 +150,7 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    - name: execute py script, feature-engineering-2
+    - name: execute py script, s3-fe-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
@@ -162,8 +162,8 @@ jobs:
         tar -czf output.tar.gz output/
         gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
 
-  modelling-lgbm:
-    needs: [feature-engineering-1, feature-engineering-2]
+  s4-mod-lgbm:
+    needs: [s3-fe-v1, s3-fe-v2]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -186,7 +186,7 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    - name: execute py script, modelling-lgbm
+    - name: execute py script, s4-mod-lgbm
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
@@ -203,7 +203,7 @@ jobs:
 
 # conclude
   conclude:
-    needs: modelling-lgbm
+    needs: s4-mod-lgbm
     runs-on: ubuntu-latest
     steps:
     - name: Conclude here
