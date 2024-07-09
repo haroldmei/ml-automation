@@ -120,11 +120,12 @@ jobs:
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
         tar xf output.tar.gz
         python features/fe_v1.py
+        python features/fe_knn.py
     
     - name: save and aggregate results, then load to cloud
       run: |
         tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v1/
 
   s3-fe-v2:
     needs: s2-fe-ta
@@ -156,14 +157,15 @@ jobs:
         gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
         tar xf output.tar.gz
         python features/fe_v2.py
+        python features/fe_knn.py
     
     - name: save and aggregate results, then load to cloud
       run: |
         tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
 
-  s4-mod-lgbm:
-    needs: [s3-fe-v1, s3-fe-v2]
+  s4-mod-lgbm-v1:
+    needs: s3-fe-v1
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -189,7 +191,7 @@ jobs:
     - name: execute py script, s4-mod-lgbm
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
+        gsutil cp gs://hmei-bucket-us/market-prediction/fe_v1/output.tar.gz ./
         tar xf output.tar.gz
         python models/lgbm.py --cv
         python models/lgbm.py --epochs=50
@@ -199,11 +201,50 @@ jobs:
     - name: save and aggregate results, then load to cloud
       run: |
         tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v1/
+
+  s4-mod-lgbm-v2:
+    needs: s3-fe-v2
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
+
+    - uses: google-github-actions/setup-gcloud@v2
+    - name: execute py script, s4-mod-lgbm
+      run: |
+        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        gsutil cp gs://hmei-bucket-us/market-prediction/fe_v2/output.tar.gz ./
+        tar xf output.tar.gz
+        python models/lgbm.py --cv
+        python models/lgbm.py --epochs=50
+        python models/lgbm.py --pred
+
+    - uses: google-github-actions/setup-gcloud@v2
+    - name: save and aggregate results, then load to cloud
+      run: |
+        tar -czf output.tar.gz output/
+        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
 
 # conclude
   conclude:
-    needs: s4-mod-lgbm
+    needs: [s4-mod-lgbm-v1, s4-mod-lgbm-v2]
     runs-on: ubuntu-latest
     steps:
     - name: Conclude here
