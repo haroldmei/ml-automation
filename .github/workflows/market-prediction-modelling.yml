@@ -32,7 +32,7 @@ jobs:
         python etl/yf.py
     - uses: actions/upload-artifact@v4
       with:
-        name: market-prediction
+        name: s1-yf-ingest
         path: output/
 
   s2-fe-ta:
@@ -58,7 +58,7 @@ jobs:
         cd ta-lib/ && sudo ./configure && sudo make && sudo make install && pip install ta-lib && cd ..
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction
+        name: s1-yf-ingest
         path: output/
     - name: execute py script, s2-fe-ta
       run: |
@@ -68,7 +68,7 @@ jobs:
         python features/fe_ta.py
     - uses: actions/upload-artifact@v4
       with:
-        name: market-prediction-ta
+        name: s2-fe-ta
         path: output/
     
   s3-fe-v1:
@@ -88,7 +88,7 @@ jobs:
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction-ta
+        name: s2-fe-ta
         path: output/
     - name: execute py script, s3-fe-v1
       run: |
@@ -99,7 +99,7 @@ jobs:
         python features/fe_knn.py
     - uses: actions/upload-artifact@v4
       with:
-        name: market-prediction-fe-v1
+        name: s3-fe-v1
         path: output/
 
   s3-fe-v2:
@@ -119,7 +119,7 @@ jobs:
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction-ta
+        name: s2-fe-ta
         path: output/
     - name: execute py script, s3-fe-v2
       run: |
@@ -130,7 +130,7 @@ jobs:
         python features/fe_knn.py
     - uses: actions/upload-artifact@v4
       with:
-        name: market-prediction-fe-v2
+        name: s3-fe-v2
         path: output/
     
   s4-mod-lgbm-v1:
@@ -150,7 +150,7 @@ jobs:
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction-fe-v1
+        name: s3-fe-v1
         path: output/
     - name: execute py script, s4-mod-lgbm-v1
       run: |
@@ -162,7 +162,7 @@ jobs:
         python models/lgbm.py --pred
     - uses: actions/upload-artifact@v4
       with:
-        name: market-prediction-up-lgbm-v1
+        name: s4-mod-lgbm-v1
         path: output/
 
   s4-mod-lgbm-v2:
@@ -182,7 +182,7 @@ jobs:
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction-fe-v2
+        name: s3-fe-v2
         path: output/
     - name: execute py script, s4-mod-lgbm-v2
       run: |
@@ -194,7 +194,7 @@ jobs:
         python models/lgbm.py --pred
     - uses: actions/upload-artifact@v4
       with:
-        name: market-prediction-up-lgbm-v2
+        name: s4-mod-lgbm-v2
         path: output/
 
   s4-mod-ae-v1:
@@ -214,7 +214,7 @@ jobs:
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh tensorflow tensorflow-probability tf-keras
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction-fe-v1
+        name: s3-fe-v1
         path: output/
     - name: execute py script, s4-mod-ae-v1
       run: |
@@ -226,7 +226,7 @@ jobs:
         python models/ae.py --pred
     - uses: actions/upload-artifact@v4
       with:
-        name: market-prediction-up-ae-v1
+        name: s4-mod-ae-v1
         path: output/
 
   s4-mod-ae-v2:
@@ -246,7 +246,7 @@ jobs:
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh tensorflow tensorflow-probability tf-keras
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction-fe-v2
+        name: s3-fe-v2
         path: output/
     - name: execute py script, s4-mod-ae-v2
       run: |
@@ -258,7 +258,7 @@ jobs:
         python models/ae.py --pred
     - uses: actions/upload-artifact@v4
       with:
-        name: market-prediction-up-ae-v2
+        name: s4-mod-ae-v2
         path: output/
 
   conclude:
