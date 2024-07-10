@@ -89,17 +89,17 @@ jobs:
         name: market-prediction
         path: output/
 
-    - uses: actions/upload-artifact@v4
-      with:
-        name: market-prediction
-        path: output/
-
     - name: execute py script, s2-fe-ta
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         #gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
         #tar xf output.tar.gz
         python features/fe_ta.py
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction-ta
+        path: output/
     
     #- uses: google-github-actions/setup-gcloud@v2
     #- name: save and aggregate results, then load to cloud
@@ -133,12 +133,7 @@ jobs:
 
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction
-        path: output/
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: market-prediction
+        name: market-prediction-ta
         path: output/
 
     - name: execute py script, s3-fe-v1
@@ -149,6 +144,10 @@ jobs:
         python features/fe_v1.py
         python features/fe_knn.py
     
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction-fe-v1
+        path: output/
     #- uses: google-github-actions/setup-gcloud@v2
     #- name: save and aggregate results, then load to cloud
     #  run: |
@@ -183,11 +182,7 @@ jobs:
     
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction
-        path: output/
-    - uses: actions/upload-artifact@v4
-      with:
-        name: market-prediction
+        name: market-prediction-ta
         path: output/
 
     - name: execute py script, s3-fe-v2
@@ -197,6 +192,11 @@ jobs:
         #tar xf output.tar.gz
         python features/fe_v2.py
         python features/fe_knn.py
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction-fe-v2
+        path: output/
     
     #- name: save and aggregate results, then load to cloud
     #  run: |
@@ -231,12 +231,9 @@ jobs:
     
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction
+        name: market-prediction-fe-v1
         path: output/
-    - uses: actions/upload-artifact@v4
-      with:
-        name: market-prediction
-        path: output/
+
     - name: execute py script, s4-mod-lgbm-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
@@ -245,6 +242,11 @@ jobs:
         python models/lgbm.py --cv
         python models/lgbm.py --epochs=50
         python models/lgbm.py --pred
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction-up-lgbm-v1
+        path: output/
 
     #- uses: google-github-actions/setup-gcloud@v2
     #- name: save and aggregate results, then load to cloud
@@ -280,12 +282,9 @@ jobs:
     
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction
+        name: market-prediction-fe-v2
         path: output/
-    - uses: actions/upload-artifact@v4
-      with:
-        name: market-prediction
-        path: output/
+        
     - name: execute py script, s4-mod-lgbm-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
@@ -294,6 +293,11 @@ jobs:
         python models/lgbm.py --cv
         python models/lgbm.py --epochs=50
         python models/lgbm.py --pred
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction-up-lgbm-v2
+        path: output/
 
     #- uses: google-github-actions/setup-gcloud@v2
     #- name: save and aggregate results, then load to cloud
@@ -329,12 +333,9 @@ jobs:
     
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction
+        name: market-prediction-fe-v1
         path: output/
-    - uses: actions/upload-artifact@v4
-      with:
-        name: market-prediction
-        path: output/
+
     - name: execute py script, s4-mod-ae-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
@@ -343,6 +344,11 @@ jobs:
         python models/ae.py --cv
         python models/ae.py --epochs=50
         python models/ae.py --pred
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction-up-ae-v1
+        path: output/
 
     #- uses: google-github-actions/setup-gcloud@v2
     #- name: save and aggregate results, then load to cloud
@@ -378,12 +384,9 @@ jobs:
     
     - uses: actions/download-artifact@v4
       with:
-        name: market-prediction
+        name: market-prediction-fe-v2
         path: output/
-    - uses: actions/upload-artifact@v4
-      with:
-        name: market-prediction
-        path: output/
+
     - name: execute py script, s4-mod-ae-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
@@ -392,6 +395,11 @@ jobs:
         python models/ae.py --cv
         python models/ae.py --epochs=50
         python models/ae.py --pred
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction-up-ae-v2
+        path: output/
 
     #- uses: google-github-actions/setup-gcloud@v2
     #- name: save and aggregate results, then load to cloud
