@@ -37,17 +37,22 @@ jobs:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
     
-    - uses: google-github-actions/setup-gcloud@v2
 
     - name: execute py script, download yf data
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python etl/yf.py
     
-    - name: save and aggregate results, then load to cloud
-      run: |
-        tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction
+        path: output/
+  
+    #- uses: google-github-actions/setup-gcloud@v2
+    # - name: save and aggregate results, then load to cloud
+    #   run: |
+    #     tar -czf output.tar.gz output/
+    #     gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
 
   s2-fe-ta:
     if: ${{ inputs.step_id }} <= 2
@@ -72,25 +77,35 @@ jobs:
       with:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
-
-    - uses: google-github-actions/setup-gcloud@v2
     
     - name: install talib
       run: |
         wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
         tar -xzf ta-lib-0.4.0-src.tar.gz
         cd ta-lib/ && sudo ./configure && sudo make && sudo make install && pip install ta-lib && cd ..
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: market-prediction
+        path: ./
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction
+        path: output/
+
     - name: execute py script, s2-fe-ta
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
-        tar xf output.tar.gz
+        #gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
+        #tar xf output.tar.gz
         python features/fe_ta.py
     
-    - name: save and aggregate results, then load to cloud
-      run: |
-        tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
+    #- uses: google-github-actions/setup-gcloud@v2
+    #- name: save and aggregate results, then load to cloud
+    #  run: |
+    #    tar -czf output.tar.gz output/
+    #    gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/
 
   s3-fe-v1:
     if: ${{ inputs.step_id }} <= 3
@@ -116,19 +131,29 @@ jobs:
         service_account: 'sunlit-core-205604@sunlit-core-205604.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
-    - uses: google-github-actions/setup-gcloud@v2
+    - uses: actions/download-artifact@v4
+      with:
+        name: market-prediction
+        path: ./
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction
+        path: output/
+
     - name: execute py script, s3-fe-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
-        tar xf output.tar.gz
+        #gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
+        #tar xf output.tar.gz
         python features/fe_v1.py
         python features/fe_knn.py
     
-    - name: save and aggregate results, then load to cloud
-      run: |
-        tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v1/
+    #- uses: google-github-actions/setup-gcloud@v2
+    #- name: save and aggregate results, then load to cloud
+    #  run: |
+    #    tar -czf output.tar.gz output/
+    #    gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v1/
 
   s3-fe-v2:
     if: ${{ inputs.step_id }} <= 3
@@ -155,18 +180,28 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
+    
+    - uses: actions/download-artifact@v4
+      with:
+        name: market-prediction
+        path: ./
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction
+        path: output/
+
     - name: execute py script, s3-fe-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
-        tar xf output.tar.gz
+        #gsutil cp gs://hmei-bucket-us/market-prediction/output.tar.gz ./
+        #tar xf output.tar.gz
         python features/fe_v2.py
         python features/fe_knn.py
     
-    - name: save and aggregate results, then load to cloud
-      run: |
-        tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
+    #- name: save and aggregate results, then load to cloud
+    #  run: |
+    #    tar -czf output.tar.gz output/
+    #    gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
 
   s4-mod-lgbm-v1:
     if: ${{ inputs.step_id }} <= 4
@@ -193,20 +228,29 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
+    
+    - uses: actions/download-artifact@v4
+      with:
+        name: market-prediction
+        path: ./
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction
+        path: output/
     - name: execute py script, s4-mod-lgbm-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        gsutil cp gs://hmei-bucket-us/market-prediction/fe_v1/output.tar.gz ./
-        tar xf output.tar.gz
+        #gsutil cp gs://hmei-bucket-us/market-prediction/fe_v1/output.tar.gz ./
+        #tar xf output.tar.gz
         python models/lgbm.py --cv
         python models/lgbm.py --epochs=50
         python models/lgbm.py --pred
 
-    - uses: google-github-actions/setup-gcloud@v2
-    - name: save and aggregate results, then load to cloud
-      run: |
-        tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v1/
+    #- uses: google-github-actions/setup-gcloud@v2
+    #- name: save and aggregate results, then load to cloud
+    #  run: |
+    #    tar -czf output.tar.gz output/
+    #    gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v1/
 
   s4-mod-lgbm-v2:
     if: ${{ inputs.step_id }} <= 4
@@ -233,20 +277,29 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
+    
+    - uses: actions/download-artifact@v4
+      with:
+        name: market-prediction
+        path: ./
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction
+        path: output/
     - name: execute py script, s4-mod-lgbm-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        gsutil cp gs://hmei-bucket-us/market-prediction/fe_v2/output.tar.gz ./
-        tar xf output.tar.gz
+        #gsutil cp gs://hmei-bucket-us/market-prediction/fe_v2/output.tar.gz ./
+        #tar xf output.tar.gz
         python models/lgbm.py --cv
         python models/lgbm.py --epochs=50
         python models/lgbm.py --pred
 
-    - uses: google-github-actions/setup-gcloud@v2
-    - name: save and aggregate results, then load to cloud
-      run: |
-        tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
+    #- uses: google-github-actions/setup-gcloud@v2
+    #- name: save and aggregate results, then load to cloud
+    #  run: |
+    #    tar -czf output.tar.gz output/
+    #    gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
 
   s4-mod-ae-v1:
     if: ${{ inputs.step_id }} <= 4
@@ -273,20 +326,29 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
+    
+    - uses: actions/download-artifact@v4
+      with:
+        name: market-prediction
+        path: ./
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction
+        path: output/
     - name: execute py script, s4-mod-ae-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        gsutil cp gs://hmei-bucket-us/market-prediction/fe_v1/output.tar.gz ./
-        tar xf output.tar.gz
+        #gsutil cp gs://hmei-bucket-us/market-prediction/fe_v1/output.tar.gz ./
+        #tar xf output.tar.gz
         python models/ae.py --cv
         python models/ae.py --epochs=50
         python models/ae.py --pred
 
-    - uses: google-github-actions/setup-gcloud@v2
-    - name: save and aggregate results, then load to cloud
-      run: |
-        tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v1/
+    #- uses: google-github-actions/setup-gcloud@v2
+    #- name: save and aggregate results, then load to cloud
+    #  run: |
+    #    tar -czf output.tar.gz output/
+    #    gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v1/
 
   s4-mod-ae-v2:
     if: ${{ inputs.step_id }} <= 4
@@ -313,20 +375,29 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
+    
+    - uses: actions/download-artifact@v4
+      with:
+        name: market-prediction
+        path: ./
+    - uses: actions/upload-artifact@v4
+      with:
+        name: market-prediction
+        path: output/
     - name: execute py script, s4-mod-ae-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        gsutil cp gs://hmei-bucket-us/market-prediction/fe_v2/output.tar.gz ./
-        tar xf output.tar.gz
+        #gsutil cp gs://hmei-bucket-us/market-prediction/fe_v2/output.tar.gz ./
+        #tar xf output.tar.gz
         python models/ae.py --cv
         python models/ae.py --epochs=50
         python models/ae.py --pred
 
-    - uses: google-github-actions/setup-gcloud@v2
-    - name: save and aggregate results, then load to cloud
-      run: |
-        tar -czf output.tar.gz output/
-        gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
+    #- uses: google-github-actions/setup-gcloud@v2
+    #- name: save and aggregate results, then load to cloud
+    #  run: |
+    #    tar -czf output.tar.gz output/
+    #    gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
 
   conclude:
     needs: [s4-mod-lgbm-v1, s4-mod-lgbm-v2, s4-mod-ae-v1, s4-mod-ae-v2]
