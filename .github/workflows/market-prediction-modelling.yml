@@ -188,7 +188,7 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    - name: execute py script, s4-mod-lgbm
+    - name: execute py script, s4-mod-lgbm-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/fe_v1/output.tar.gz ./
@@ -227,7 +227,7 @@ jobs:
         workload_identity_provider: 'projects/570510735077/locations/global/workloadIdentityPools/github/providers/yt-comment-analysis'
 
     - uses: google-github-actions/setup-gcloud@v2
-    - name: execute py script, s4-mod-lgbm
+    - name: execute py script, s4-mod-lgbm-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         gsutil cp gs://hmei-bucket-us/market-prediction/fe_v2/output.tar.gz ./
@@ -242,7 +242,6 @@ jobs:
         tar -czf output.tar.gz output/
         gsutil cp output.tar.gz gs://hmei-bucket-us/market-prediction/fe_v2/
 
-# conclude
   conclude:
     needs: [s4-mod-lgbm-v1, s4-mod-lgbm-v2]
     runs-on: ubuntu-latest
