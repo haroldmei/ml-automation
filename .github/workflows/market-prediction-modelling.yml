@@ -176,6 +176,7 @@ jobs:
       - name: s4-mod-lgbm-cv-v1-merge
         uses: actions/upload-artifact/merge@v4
         with:
+          name: s4-mod-lgbm-cv-v1-merge
           delete-merged: true
 
   s4-mod-lgbm-cv-v2:
@@ -220,6 +221,7 @@ jobs:
       - name: s4-mod-lgbm-cv-v2-merge
         uses: actions/upload-artifact/merge@v4
         with:
+          name: s4-mod-lgbm-cv-v2-merge
           delete-merged: true
 
   s5-mod-lgbm-v1:
