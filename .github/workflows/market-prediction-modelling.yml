@@ -133,9 +133,16 @@ jobs:
         name: s3-fe-v2
         path: output/
     
-  s4-mod-lgbm-v1:
+  s4-mod-lgbm-cv-v1:
     if: ${{ inputs.step_id }} <= ${{ 4 }}
     needs: s3-fe-v1
+    strategy:
+      matrix:
+        reg_alpha: [-3, -2, -1, 0, 1, 2, 3]
+        reg_lambda: [-3, -2, -1, 0, 1, 2, 3]
+        min_data_in_leaf: [-3, -2, -1, 0, 1, 2, 3]
+        num_leaves: [-3, -2, -1, 0, 1, 2, 3]
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -155,19 +162,21 @@ jobs:
     - name: execute py script, s4-mod-lgbm-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        #gsutil cp gs://hmei-bucket-us/market-prediction/fe_v1/output.tar.gz ./
-        #tar xf output.tar.gz
-        python models/lgbm.py --cv
-        python models/lgbm.py --epochs=50
-        python models/lgbm.py --pred
+        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }} --num_leaves=${{ matrix.num_leaves }}
     - uses: actions/upload-artifact@v4
       with:
-        name: s4-mod-lgbm-v1
+        name: s4-mod-lgbm-cv-v1
         path: output/
 
-  s4-mod-lgbm-v2:
+  s4-mod-lgbm-cv-v2:
     if: ${{ inputs.step_id }} <= ${{ 4 }}
     needs: s3-fe-v2
+    strategy:
+      matrix:
+        reg_alpha: [-3, -2, -1, 0, 1, 2, 3]
+        reg_lambda: [-3, -2, -1, 0, 1, 2, 3]
+        min_data_in_leaf: [-3, -2, -1, 0, 1, 2, 3]
+        num_leaves: [-3, -2, -1, 0, 1, 2, 3]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -187,14 +196,67 @@ jobs:
     - name: execute py script, s4-mod-lgbm-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        #gsutil cp gs://hmei-bucket-us/market-prediction/fe_v2/output.tar.gz ./
-        #tar xf output.tar.gz
-        python models/lgbm.py --cv
-        python models/lgbm.py --epochs=50
-        python models/lgbm.py --pred
+        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }} --num_leaves=${{ matrix.num_leaves }}
     - uses: actions/upload-artifact@v4
       with:
-        name: s4-mod-lgbm-v2
+        name: s4-mod-lgbm-cv-v2
+        path: output/
+
+  s5-mod-lgbm-v1:
+    if: ${{ inputs.step_id }} <= ${{ 4 }}
+    needs: s4-mod-lgbm-cv-v1
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
+    - uses: actions/download-artifact@v4
+      with:
+        name: s4-mod-lgbm-cv-v1
+        path: output/
+    - name: execute py script, s4-mod-lgbm-v1
+      run: |
+        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        python models/lgbm.py --epochs=50
+    - uses: actions/upload-artifact@v4
+      with:
+        name: s5-mod-lgbm-v1
+        path: output/
+
+  s5-mod-lgbm-v2:
+    if: ${{ inputs.step_id }} <= ${{ 4 }}
+    needs: s4-mod-lgbm-cv-v2
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
+    - uses: actions/download-artifact@v4
+      with:
+        name: s4-mod-lgbm-cv-v2
+        path: output/
+    - name: execute py script, s4-mod-lgbm-v2
+      run: |
+        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        python models/lgbm.py --epochs=50
+    - uses: actions/upload-artifact@v4
+      with:
+        name: s5-mod-lgbm-v2
         path: output/
 
   s4-mod-ae-v1:
@@ -264,7 +326,7 @@ jobs:
         path: output/
 
   conclude:
-    needs: [s4-mod-lgbm-v1, s4-mod-lgbm-v2, s4-mod-ae-v1, s4-mod-ae-v2]
+    needs: [s5-mod-lgbm-v1, s5-mod-lgbm-v2]
     runs-on: ubuntu-latest
     steps:
     - name: Conclude here
