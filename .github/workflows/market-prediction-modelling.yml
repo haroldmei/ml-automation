@@ -138,9 +138,9 @@ jobs:
     needs: s3-fe-v1
     strategy:
       matrix:
-        reg_alpha: [-2, -1, 0, 1, 2, 3]
-        reg_lambda: [-2, -1, 0, 1, 2, 3]
-        min_data_in_leaf: [-3, -2, -1, 0, 1, 2, 3]
+        reg_alpha: [-1, 0, 1]
+        reg_lambda: [-1, 0, 1]
+        min_data_in_leaf: [-1, 0, 1]
 
     runs-on: ubuntu-latest
     steps:
@@ -172,9 +172,9 @@ jobs:
     needs: s3-fe-v2
     strategy:
       matrix:
-        reg_alpha: [-2, -1, 0, 1, 2, 3]
-        reg_lambda: [-2, -1, 0, 1, 2, 3]
-        min_data_in_leaf: [-3, -2, -1, 0, 1, 2, 3]
+        reg_alpha: [-1, 0, 1]
+        reg_lambda: [-1, 0, 1]
+        min_data_in_leaf: [-1, 0, 1]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
