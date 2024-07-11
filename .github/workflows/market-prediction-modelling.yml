@@ -301,8 +301,8 @@ jobs:
 
     - name: Build project # This would actually build your project, using zip for an example artifact
       run: |
-        zip --junk-paths s4-mod-lgbm-v2 s4-mod-lgbm-v2
-        zip --junk-paths s4-mod-lgbm-v1 s4-mod-lgbm-v1
+        zip --junk-paths s4-mod-lgbm-v2 s4-mod-lgbm-v2/*
+        zip --junk-paths s4-mod-lgbm-v1 s4-mod-lgbm-v1/*
 
     - name: Create Release
       id: create_release
