@@ -158,7 +158,7 @@ jobs:
       with:
         name: s3-fe-v1
         path: output/
-    - name: execute py script, s4-mod-lgbm-v1
+    - name: execute py script, s4-mod-lgbm-cv-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
@@ -202,7 +202,7 @@ jobs:
       with:
         name: s3-fe-v2
         path: output/
-    - name: execute py script, s4-mod-lgbm-v2
+    - name: execute py script, s4-mod-lgbm-cv-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
@@ -242,7 +242,7 @@ jobs:
       with:
         name: s4-mod-lgbm-cv-v1-merge
         path: output/
-    - name: execute py script, s4-mod-lgbm-v1
+    - name: execute py script, s5-mod-lgbm-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         ls output/
@@ -271,7 +271,7 @@ jobs:
       with:
         name: s4-mod-lgbm-cv-v2-merge
         path: output/
-    - name: execute py script, s4-mod-lgbm-v2
+    - name: execute py script, s5-mod-lgbm-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         ls output/
@@ -291,18 +291,18 @@ jobs:
       
     - uses: actions/download-artifact@v4
       with:
-        name: s4-mod-lgbm-v1
-        path: s4-mod-lgbm-v1/
+        name: s5-mod-lgbm-v1
+        path: s5-mod-lgbm-v1/
 
     - uses: actions/download-artifact@v4
       with:
-        name: s4-mod-lgbm-v2
-        path: s4-mod-lgbm-v2/
+        name: s5-mod-lgbm-v2
+        path: s5-mod-lgbm-v2/
 
     - name: Build project # This would actually build your project, using zip for an example artifact
       run: |
-        zip --junk-paths s4-mod-lgbm-v2 s4-mod-lgbm-v2/*
-        zip --junk-paths s4-mod-lgbm-v1 s4-mod-lgbm-v1/*
+        zip --junk-paths s5-mod-lgbm-v2 s5-mod-lgbm-v2/*
+        zip --junk-paths s5-mod-lgbm-v1 s5-mod-lgbm-v1/*
 
     - name: Create Release
       id: create_release
@@ -319,24 +319,24 @@ jobs:
         draft: false
         prerelease: false
         
-    - name: Upload Release Asset s4-mod-lgbm-v1
-      id: upload-release-asset-s4-mod-lgbm-v1
+    - name: Upload Release Asset s5-mod-lgbm-v1
+      id: upload-release-asset-s5-mod-lgbm-v1
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./s4-mod-lgbm-v1.zip
-        asset_name: s4-mod-lgbm-v1.zip
+        asset_path: ./s5-mod-lgbm-v1.zip
+        asset_name: s5-mod-lgbm-v1.zip
         asset_content_type: application/zip
         
-    - name: Upload Release Asset s4-mod-lgbm-v2
-      id: upload-release-asset-s4-mod-lgbm-v2
+    - name: Upload Release Asset s5-mod-lgbm-v2
+      id: upload-release-asset-s5-mod-lgbm-v2
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./s4-mod-lgbm-v2.zip
-        asset_name: s4-mod-lgbm-v2.zip
+        asset_path: ./s5-mod-lgbm-v2.zip
+        asset_name: s5-mod-lgbm-v2.zip
         asset_content_type: application/zip
