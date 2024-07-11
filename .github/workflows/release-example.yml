@@ -16,8 +16,8 @@ jobs:
       - name: Build project # This would actually build your project, using zip for an example artifact
         run: |
           mkdir output
-          echo '12345678901234567890' > 'output/result.txt'
-          zip --junk-paths my-artifact output
+          echo '12345678901234567890' > output/result.txt
+          zip --junk-paths my-artifact output/result.txt
         
       - name: Create Release
         id: create_release
