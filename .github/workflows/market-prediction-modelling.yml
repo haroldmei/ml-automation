@@ -12,7 +12,7 @@ on:
 
 jobs:
   s1-yf-ingest:
-    if: ${{ inputs.step_id }} <= 1
+    if: ${{ inputs.step_id }} <= ${{ 1 }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -36,7 +36,7 @@ jobs:
         path: output/
 
   s2-fe-ta:
-    if: ${{ inputs.step_id }} <= 2
+    if: ${{ inputs.step_id }} <= ${{ 2 }}
     needs: s1-yf-ingest
     runs-on: ubuntu-latest
     steps:
@@ -72,7 +72,7 @@ jobs:
         path: output/
     
   s3-fe-v1:
-    if: ${{ inputs.step_id }} <= 3
+    if: ${{ inputs.step_id }} <= ${{ 3 }}
     needs: s2-fe-ta
     runs-on: ubuntu-latest
     steps:
@@ -103,7 +103,7 @@ jobs:
         path: output/
 
   s3-fe-v2:
-    if: ${{ inputs.step_id }} <= 3
+    if: ${{ inputs.step_id }} <= ${{ 3 }}
     needs: s2-fe-ta
     runs-on: ubuntu-latest
     steps:
@@ -134,7 +134,7 @@ jobs:
         path: output/
     
   s4-mod-lgbm-v1:
-    if: ${{ inputs.step_id }} <= 4
+    if: ${{ inputs.step_id }} <= ${{ 4 }}
     needs: s3-fe-v1
     runs-on: ubuntu-latest
     steps:
@@ -166,7 +166,7 @@ jobs:
         path: output/
 
   s4-mod-lgbm-v2:
-    if: ${{ inputs.step_id }} <= 4
+    if: ${{ inputs.step_id }} <= ${{ 4 }}
     needs: s3-fe-v2
     runs-on: ubuntu-latest
     steps:
@@ -198,7 +198,7 @@ jobs:
         path: output/
 
   s4-mod-ae-v1:
-    #if: ${{ inputs.step_id }} <= 4
+    #if: ${{ inputs.step_id }} <= ${{ 4 }}
     if: False
     needs: s3-fe-v1
     runs-on: ubuntu-latest
@@ -212,7 +212,7 @@ jobs:
         python-version: '3.10' 
     - name: Install Packages and Python dependencies
       run: |
-        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh tensorflow tensorflow-probability tf-keras
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh tensorflow==2.10.1 tensorflow-probability==0.14.0 keras==2.10.0
     - uses: actions/download-artifact@v4
       with:
         name: s3-fe-v1
@@ -231,7 +231,7 @@ jobs:
         path: output/
 
   s4-mod-ae-v2:
-    #if: ${{ inputs.step_id }} <= 4
+    #if: ${{ inputs.step_id }} <= ${{ 4 }}
     if: False
     needs: s3-fe-v2
     runs-on: ubuntu-latest
@@ -245,7 +245,7 @@ jobs:
         python-version: '3.10' 
     - name: Install Packages and Python dependencies
       run: |
-        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh tensorflow tensorflow-probability tf-keras
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh tensorflow==2.10.1 tensorflow-probability==0.14.0 keras==2.10.0
     - uses: actions/download-artifact@v4
       with:
         name: s3-fe-v2
