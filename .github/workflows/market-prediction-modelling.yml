@@ -141,7 +141,6 @@ jobs:
         reg_alpha: [-3, -2, -1, 0, 1, 2, 3]
         reg_lambda: [-3, -2, -1, 0, 1, 2, 3]
         min_data_in_leaf: [-3, -2, -1, 0, 1, 2, 3]
-        num_leaves: [-3, -2, -1, 0, 1, 2, 3]
 
     runs-on: ubuntu-latest
     steps:
@@ -162,7 +161,7 @@ jobs:
     - name: execute py script, s4-mod-lgbm-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }} --num_leaves=${{ matrix.num_leaves }}
+        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
     - uses: actions/upload-artifact@v4
       with:
         name: s4-mod-lgbm-cv-v1
@@ -176,7 +175,6 @@ jobs:
         reg_alpha: [-3, -2, -1, 0, 1, 2, 3]
         reg_lambda: [-3, -2, -1, 0, 1, 2, 3]
         min_data_in_leaf: [-3, -2, -1, 0, 1, 2, 3]
-        num_leaves: [-3, -2, -1, 0, 1, 2, 3]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -196,7 +194,7 @@ jobs:
     - name: execute py script, s4-mod-lgbm-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }} --num_leaves=${{ matrix.num_leaves }}
+        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
     - uses: actions/upload-artifact@v4
       with:
         name: s4-mod-lgbm-cv-v2
