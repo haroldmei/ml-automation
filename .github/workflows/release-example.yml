@@ -17,7 +17,7 @@ jobs:
         run: |
           mkdir output
           echo '12345678901234567890' > output/result.txt
-          zip --junk-paths my-artifact output/result.txt
+          zip --junk-paths my-artifact output/
         
       - name: Create Release
         id: create_release
