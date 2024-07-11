@@ -177,7 +177,6 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         with:
           name: s4-mod-lgbm-cv-v1-merge
-          delete-merged: true
 
   s4-mod-lgbm-cv-v2:
     if: ${{ inputs.step_id }} <= ${{ 4 }}
@@ -222,7 +221,6 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         with:
           name: s4-mod-lgbm-cv-v2-merge
-          delete-merged: true
 
   s5-mod-lgbm-v1:
     if: ${{ inputs.step_id }} <= ${{ 5 }}
