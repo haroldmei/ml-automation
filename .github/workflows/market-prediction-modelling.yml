@@ -10,6 +10,11 @@ on:
         required: true
         type: int
 
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'smp-v*' # Push events to matching smp-v*, i.e. smp-v1.0, smp-v20.15.10
+
 jobs:
   s1-yf-ingest:
     if: ${{ inputs.step_id }} <= ${{ 1 }}
