@@ -162,10 +162,18 @@ jobs:
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
+        mv output output-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
     - uses: actions/upload-artifact@v4
       with:
-        name: s4-mod-lgbm-cv-v1
-        path: output/
+        name: s4-mod-lgbm-cv-v1-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
+        path: output-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}/
+
+  s4-mod-lgbm-cv-v1-merge:
+    runs-on: ubuntu-latest
+    needs: s4-mod-lgbm-cv-v1
+    steps:
+      - name: Merge Artifacts for s4-mod-lgbm-cv-v1
+        uses: actions/upload-artifact/merge@v4
 
   s4-mod-lgbm-cv-v2:
     if: ${{ inputs.step_id }} <= ${{ 4 }}
@@ -195,14 +203,22 @@ jobs:
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
+        mv output output-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
     - uses: actions/upload-artifact@v4
       with:
-        name: s4-mod-lgbm-cv-v2
-        path: output/
+        name: s4-mod-lgbm-cv-v2-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
+        path: output-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}/
+
+  s4-mod-lgbm-cv-v2-merge:
+    runs-on: ubuntu-latest
+    needs: s4-mod-lgbm-cv-v2
+    steps:
+      - name: Merge Artifacts for s4-mod-lgbm-cv-v2
+        uses: actions/upload-artifact/merge@v4
 
   s5-mod-lgbm-v1:
     if: ${{ inputs.step_id }} <= ${{ 5 }}
-    needs: s4-mod-lgbm-cv-v1
+    needs: s4-mod-lgbm-cv-v1-merge
 
     runs-on: ubuntu-latest
     steps:
@@ -232,7 +248,7 @@ jobs:
 
   s5-mod-lgbm-v2:
     if: ${{ inputs.step_id }} <= ${{ 5 }}
-    needs: s4-mod-lgbm-cv-v2
+    needs: s4-mod-lgbm-cv-v2-merge
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
