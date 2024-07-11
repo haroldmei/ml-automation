@@ -138,8 +138,8 @@ jobs:
     needs: s3-fe-v1
     strategy:
       matrix:
-        reg_alpha: [-3, -2, -1, 0, 1, 2, 3]
-        reg_lambda: [-3, -2, -1, 0, 1, 2, 3]
+        reg_alpha: [-2, -1, 0, 1, 2, 3]
+        reg_lambda: [-2, -1, 0, 1, 2, 3]
         min_data_in_leaf: [-3, -2, -1, 0, 1, 2, 3]
 
     runs-on: ubuntu-latest
@@ -172,8 +172,8 @@ jobs:
     needs: s3-fe-v2
     strategy:
       matrix:
-        reg_alpha: [-3, -2, -1, 0, 1, 2, 3]
-        reg_lambda: [-3, -2, -1, 0, 1, 2, 3]
+        reg_alpha: [-2, -1, 0, 1, 2, 3]
+        reg_lambda: [-2, -1, 0, 1, 2, 3]
         min_data_in_leaf: [-3, -2, -1, 0, 1, 2, 3]
     runs-on: ubuntu-latest
     steps:
