@@ -223,6 +223,7 @@ jobs:
     - name: execute py script, s4-mod-lgbm-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        ls output/
         python models/lgbm.py --epochs=50
     - uses: actions/upload-artifact@v4
       with:
@@ -251,6 +252,7 @@ jobs:
     - name: execute py script, s4-mod-lgbm-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        ls output/
         python models/lgbm.py --epochs=50
     - uses: actions/upload-artifact@v4
       with:
