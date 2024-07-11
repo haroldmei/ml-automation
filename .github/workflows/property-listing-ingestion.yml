@@ -1,5 +1,5 @@
 # This is a basic workflow that is manually triggered
-name: Properties collector
+name: Properties listing ingestion
 
 on:
   workflow_dispatch:
