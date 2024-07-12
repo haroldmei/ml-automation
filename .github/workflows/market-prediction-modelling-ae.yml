@@ -1,0 +1,144 @@
+# This is a basic workflow that is manually triggered
+name: Stock market prediction modelling auto-encoder
+
+on:
+  workflow_dispatch:
+    inputs:
+      step_id:
+        description: "step_id is the first step to start with"
+        default: 0
+        required: true
+        type: int
+
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'smp-v*' # Push events to matching smp-v*, i.e. smp-v1.0, smp-v20.15.10
+
+env:
+  FEATURE_VERSION: smp-fe-v0.02
+
+jobs:
+
+  s5-mod-ae-v1:
+    runs-on: self-hosted-home
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh tensorflow==2.10.1 tensorflow-probability==0.14.0 keras==2.10.0
+
+    - name: Download features
+      run: |
+        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-v1.tar.gz > /dev/null
+        tar xf s3-fe-v1.tar.gz
+        mv s3-fe-v1 output
+        
+    - name: execute py script, s5-mod-ae-v1
+      run: |
+        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        python models/ae.py --cv
+        python models/ae.py --epochs=50
+        python models/ae.py --pred
+    - uses: actions/upload-artifact@v4
+      with:
+        name: s5-mod-ae-v1
+        path: output/
+
+  s5-mod-ae-v2:
+    runs-on: self-hosted-home
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: "haroldmei/stock-market-prediction"
+        token: ${{ secrets.PRIVATE_SSH_KEY }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+    - name: Install Packages and Python dependencies
+      run: |
+        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh tensorflow==2.10.1 tensorflow-probability==0.14.0 keras==2.10.0
+
+    - name: Download features
+      run: |
+        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-v2.tar.gz > /dev/null
+        tar xf s3-fe-v2.tar.gz
+        mv s3-fe-v2 output
+        
+    - name: execute py script, s5-mod-ae-v2
+      run: |
+        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        python models/ae.py --cv
+        python models/ae.py --epochs=50
+        python models/ae.py --pred
+    - uses: actions/upload-artifact@v4
+      with:
+        name: s5-mod-ae-v2
+        path: output/
+
+  release:
+    name: Release Models
+    needs: [s5-mod-ae-v1, s5-mod-ae-v2]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - uses: actions/download-artifact@v4
+      with:
+        name: s5-mod-ae-v1
+        path: s5-mod-ae-v1/
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: s5-mod-ae-v2
+        path: s5-mod-ae-v2/
+
+    - name: Build project # This would actually build your project, using zip for an example artifact
+      run: |
+        ls s5-mod-ae-v2/
+        tar -czf s5-mod-ae-v2.tar.gz s5-mod-ae-v2
+        tar -czf s5-mod-ae-v1.tar.gz s5-mod-ae-v1
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Change
+          - Second Change
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset s5-mod-ae-v1
+      id: upload-release-asset-s5-mod-ae-v1
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./s5-mod-ae-v1.tar.gz
+        asset_name: s5-mod-ae-v1.tar.gz
+        asset_content_type: application/zip
+        
+    - name: Upload Release Asset s5-mod-ae-v2
+      id: upload-release-asset-s5-mod-ae-v2
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./s5-mod-ae-v2.tar.gz
+        asset_name: s5-mod-ae-v2.tar.gz
+        asset_content_type: application/zip

@@ -1,5 +1,5 @@
 # This is a basic workflow that is manually triggered
-name: Stock market prediction modelling
+name: Stock market prediction modelling lgbm
 
 on:
   workflow_dispatch:
