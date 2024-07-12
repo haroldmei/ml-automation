@@ -40,9 +40,11 @@ jobs:
 
     - name: Download features
       run: |
-        mkdir output && cd output && wget https://github.com/haroldmei/ml-automation/releases/download/smp-fe-v0.02/s3-fe-v1.tar.gz
+        wget https://github.com/haroldmei/ml-automation/releases/download/smp-fe-v0.02/s3-fe-v1.tar.gz
         tar xf s3-fe-v1.tar.gz
-        ls
+        mv s3-fe-v1 output
+        ls output/
+        
     - name: execute py script, s4-mod-lgbm-cv-v1
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
@@ -85,9 +87,11 @@ jobs:
     
     - name: Download features
       run: |
-        mkdir output && cd output && wget https://github.com/haroldmei/ml-automation/releases/download/smp-fe-v0.02/s3-fe-v2.tar.gz
-        tar xf s3-fe-v1.tar.gz
-        ls
+        wget https://github.com/haroldmei/ml-automation/releases/download/smp-fe-v0.02/s3-fe-v2.tar.gz
+        tar xf s3-fe-v2.tar.gz
+        mv s3-fe-v2 output
+        ls output/
+        
     - name: execute py script, s4-mod-lgbm-cv-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
