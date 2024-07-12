@@ -13,7 +13,7 @@ on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'smp-v*' # Push events to matching smp-v*, i.e. smp-v1.0, smp-v20.15.10
+      - 'smp-lgbm-v*' # Push events to matching smp-v*, i.e. smp-v1.0, smp-v20.15.10
 
 env:
   FEATURE_VERSION: smp-fe-v0.02
