@@ -130,7 +130,7 @@ jobs:
     - name: Download features
       run: |
         wget https://github.com/haroldmei/ml-automation/releases/download/smp-fe-v0.02/s3-fe-v1.tar.gz > /dev/null
-        tar xf s3-fe-v1.tar.gz
+        tar xf s3-fe-v1.tar.gz > /dev/null
         mv s3-fe-v1 output
 
     - name: execute py script, s5-mod-lgbm-v1
@@ -138,7 +138,7 @@ jobs:
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --epochs=50
         mkdir -p data/models
-        cp output/models/* data/models
+        cp -r output/models/* data/models
     - uses: actions/upload-artifact@v4
       with:
         name: s5-mod-lgbm-v1
@@ -159,18 +159,18 @@ jobs:
     - name: Install Packages and Python dependencies
       run: |
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
-        
+
     - name: Download features
       run: |
         wget https://github.com/haroldmei/ml-automation/releases/download/smp-fe-v0.02/s3-fe-v2.tar.gz > /dev/null
-        tar xf s3-fe-v2.tar.gz
+        tar xf s3-fe-v2.tar.gz > /dev/null
         mv s3-fe-v2 output
     - name: execute py script, s5-mod-lgbm-v2
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --epochs=50
         mkdir -p data/models
-        cp output/models/* data/models
+        cp -r output/models/* data/models
     - uses: actions/upload-artifact@v4
       with:
         name: s5-mod-lgbm-v2
