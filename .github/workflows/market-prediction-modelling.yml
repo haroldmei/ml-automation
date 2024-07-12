@@ -19,7 +19,6 @@ jobs:
 
   s4-mod-lgbm-cv-v1:
     if: ${{ inputs.step_id }} <= ${{ 4 }}
-    needs: s3-fe-v1
     strategy:
       matrix:
         reg_alpha: [0, 1]
@@ -66,7 +65,6 @@ jobs:
 
   s4-mod-lgbm-cv-v2:
     if: ${{ inputs.step_id }} <= ${{ 4 }}
-    needs: s3-fe-v2
     strategy:
       matrix:
         reg_alpha: [0, 1]
