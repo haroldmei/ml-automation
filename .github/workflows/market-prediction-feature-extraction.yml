@@ -13,7 +13,7 @@ on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'smp-v*' # Push events to matching smp-v*, i.e. smp-v1.0, smp-v20.15.10
+      - 'smp-fe-v*' # Push events to matching smp-v*, i.e. smp-v1.0, smp-v20.15.10
 
 jobs:
   s1-yf-ingest:
@@ -137,160 +137,10 @@ jobs:
       with:
         name: s3-fe-v2
         path: output/
-    
-  s4-mod-lgbm-cv-v1:
-    if: ${{ inputs.step_id }} <= ${{ 4 }}
-    needs: s3-fe-v1
-    strategy:
-      matrix:
-        reg_alpha: [0, 1]
-        reg_lambda: [0, 1]
-        min_data_in_leaf: [0, 1]
-
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        repository: "haroldmei/stock-market-prediction"
-        token: ${{ secrets.PRIVATE_SSH_KEY }}
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10' 
-    - name: Install Packages and Python dependencies
-      run: |
-        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
-    - uses: actions/download-artifact@v4
-      with:
-        name: s3-fe-v1
-        path: output/
-    - name: execute py script, s4-mod-lgbm-cv-v1
-      run: |
-        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
-        mkdir -p data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-        cp output/models/*.csv data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-    - uses: actions/upload-artifact@v4
-      with:
-        name: s4-mod-lgbm-cv-v1-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-        path: data/
-
-  s4-mod-lgbm-cv-v1-merge:
-    runs-on: ubuntu-latest
-    needs: s4-mod-lgbm-cv-v1
-    steps:
-      - name: s4-mod-lgbm-cv-v1-merge
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: s4-mod-lgbm-cv-v1-merge
-
-  s4-mod-lgbm-cv-v2:
-    if: ${{ inputs.step_id }} <= ${{ 4 }}
-    needs: s3-fe-v2
-    strategy:
-      matrix:
-        reg_alpha: [0, 1]
-        reg_lambda: [0, 1]
-        min_data_in_leaf: [0, 1]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        repository: "haroldmei/stock-market-prediction"
-        token: ${{ secrets.PRIVATE_SSH_KEY }}
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10' 
-    - name: Install Packages and Python dependencies
-      run: |
-        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
-    - uses: actions/download-artifact@v4
-      with:
-        name: s3-fe-v2
-        path: output/
-    - name: execute py script, s4-mod-lgbm-cv-v2
-      run: |
-        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
-        mkdir -p data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-        cp output/models/*.csv data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-    - uses: actions/upload-artifact@v4
-      with:
-        name: s4-mod-lgbm-cv-v2-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-        path: data/
-
-  s4-mod-lgbm-cv-v2-merge:
-    runs-on: ubuntu-latest
-    needs: s4-mod-lgbm-cv-v2
-    steps:
-      - name: s4-mod-lgbm-cv-v2-merge
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: s4-mod-lgbm-cv-v2-merge
-
-  s5-mod-lgbm-v1:
-    if: ${{ inputs.step_id }} <= ${{ 5 }}
-    needs: s4-mod-lgbm-cv-v1-merge
-
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        repository: "haroldmei/stock-market-prediction"
-        token: ${{ secrets.PRIVATE_SSH_KEY }}
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10' 
-    - name: Install Packages and Python dependencies
-      run: |
-        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
-    - uses: actions/download-artifact@v4
-      with:
-        name: s4-mod-lgbm-cv-v1-merge
-        path: output/
-    - name: execute py script, s5-mod-lgbm-v1
-      run: |
-        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        python models/lgbm.py --epochs=50
-        mkdir -p data/models
-        cp output/models/* data/models
-    - uses: actions/upload-artifact@v4
-      with:
-        name: s5-mod-lgbm-v1
-        path: data/
-
-  s5-mod-lgbm-v2:
-    if: ${{ inputs.step_id }} <= ${{ 5 }}
-    needs: s4-mod-lgbm-cv-v2-merge
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        repository: "haroldmei/stock-market-prediction"
-        token: ${{ secrets.PRIVATE_SSH_KEY }}
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10' 
-    - name: Install Packages and Python dependencies
-      run: |
-        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
-    - uses: actions/download-artifact@v4
-      with:
-        name: s4-mod-lgbm-cv-v2-merge
-        path: output/
-    - name: execute py script, s5-mod-lgbm-v2
-      run: |
-        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        python models/lgbm.py --epochs=50
-        mkdir -p data/models
-        cp output/models/* data/models
-    - uses: actions/upload-artifact@v4
-      with:
-        name: s5-mod-lgbm-v2
-        path: data/
 
   release:
-    name: Release Models
-    needs: [s5-mod-lgbm-v1, s5-mod-lgbm-v2]
+    name: Release Features
+    needs: [s3-fe-v1, s3-fe-v2]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -298,19 +148,18 @@ jobs:
       
     - uses: actions/download-artifact@v4
       with:
-        name: s5-mod-lgbm-v1
-        path: s5-mod-lgbm-v1/
+        name: s3-fe-v1
+        path: s3-fe-v1/
 
     - uses: actions/download-artifact@v4
       with:
-        name: s5-mod-lgbm-v2
-        path: s5-mod-lgbm-v2/
+        name: s3-fe-v2
+        path: s3-fe-v2/
 
     - name: Build project # This would actually build your project, using zip for an example artifact
       run: |
-        ls s5-mod-lgbm-v2/
-        tar -czf s5-mod-lgbm-v2.tar.gz s5-mod-lgbm-v2
-        tar -czf s5-mod-lgbm-v1.tar.gz s5-mod-lgbm-v1
+        tar -czf s3-fe-v2.tar.gz s3-fe-v2
+        tar -czf s3-fe-v1.tar.gz s3-fe-v1
 
     - name: Create Release
       id: create_release
@@ -327,24 +176,24 @@ jobs:
         draft: false
         prerelease: false
         
-    - name: Upload Release Asset s5-mod-lgbm-v1
-      id: upload-release-asset-s5-mod-lgbm-v1
+    - name: Upload Release Asset s3-fe-v1
+      id: upload-release-asset-s3-fe-v1
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./s5-mod-lgbm-v1.tar.gz
-        asset_name: s5-mod-lgbm-v1.tar.gz
+        asset_path: ./s3-fe-v1.tar.gz
+        asset_name: s3-fe-v1.tar.gz
         asset_content_type: application/zip
         
-    - name: Upload Release Asset s5-mod-lgbm-v2
-      id: upload-release-asset-s5-mod-lgbm-v2
+    - name: Upload Release Asset s3-fe-v2
+      id: upload-release-asset-s3-fe-v2
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./s5-mod-lgbm-v2.tar.gz
-        asset_name: s5-mod-lgbm-v2.tar.gz
+        asset_path: ./s3-fe-v2.tar.gz
+        asset_name: s3-fe-v2.tar.gz
         asset_content_type: application/zip
