@@ -103,6 +103,8 @@ jobs:
       uses: actions/upload-artifact/merge@v4
       with:
         name: s4-mod-lgbm-v1-select-parameter
+    
+    - uses: actions/checkout@v4
     - uses: actions/download-artifact@v4
       with:
         name: s4-mod-lgbm-v1-select-parameter
@@ -124,6 +126,8 @@ jobs:
       uses: actions/upload-artifact/merge@v4
       with:
         name: s4-mod-lgbm-v2-select-parameter
+    
+    - uses: actions/checkout@v4
     - uses: actions/download-artifact@v4
       with:
         name: s4-mod-lgbm-v2-select-parameter
