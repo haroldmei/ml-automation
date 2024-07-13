@@ -1,5 +1,5 @@
 # This is a basic workflow that is manually triggered
-name: Stock market prediction feature extraction
+name: Market prediction feature extraction
 
 on:
   workflow_dispatch:

@@ -1,5 +1,5 @@
 # This is a basic workflow that is manually triggered
-name: Stock market prediction modelling auto-encoder
+name: Market prediction modelling auto-encoder
 
 on:
   workflow_dispatch:
