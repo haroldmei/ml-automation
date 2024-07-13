@@ -42,7 +42,7 @@ jobs:
         
     - name: execute py script, s5-mod-ae-v1
       run: |
-        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        export PYTHONPATH=$PWD/
         python models/ae.py --cv
         python models/ae.py --epochs=50
         python models/ae.py --pred
@@ -73,7 +73,7 @@ jobs:
         
     - name: execute py script, s5-mod-ae-v2
       run: |
-        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
+        export PYTHONPATH=$PWD/
         python models/ae.py --cv
         python models/ae.py --epochs=50
         python models/ae.py --pred
