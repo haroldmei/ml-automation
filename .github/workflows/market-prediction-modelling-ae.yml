@@ -21,7 +21,7 @@ env:
 jobs:
 
   s5-mod-ae-v1:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
       with:
@@ -52,7 +52,7 @@ jobs:
         path: output/
 
   s5-mod-ae-v2:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
       with:
