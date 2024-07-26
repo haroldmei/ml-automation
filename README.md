@@ -19,6 +19,9 @@ Components supported:
 * A/B testing
 * Continuous training
 
+Overview diagram:
+![plot](./docs/overview.png)
+
 ## End to end automations for production
 
 ### Stock market prediction
