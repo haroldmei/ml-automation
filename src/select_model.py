@@ -2,7 +2,7 @@ import argparse
 from glob import glob
 import pandas as pd
 import json
-import os
+import shutil
 
 def main(args):
     files = glob(f'{args.basedir}/*/{args.file}')
@@ -20,7 +20,7 @@ def main(args):
     # remove unselected results
     for f in files:
         if f != df['folder'].tolist()[idx]:
-            os.rmdir(f[:-12]) 
+            shutil.rmtree(f[:-12]) 
             print('removing unselected result: ', f[:-12])
 
 if __name__ == '__main__':
