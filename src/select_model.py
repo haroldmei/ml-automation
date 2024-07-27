@@ -7,10 +7,10 @@ import shutil
 def main(args):
     files = glob(f'{args.basedir}/*/{args.file}')
     items = []
-    for f in files:
-        with open(f, 'r') as f:
+    for ff in files:
+        with open(ff, 'r') as f:
             dd = json.loads(f.read())
-            dd['folder'] = f
+            dd['folder'] = ff
             items.append(dd)
     df = pd.DataFrame.from_records(items)
     idx = df[args.col].argmax()
