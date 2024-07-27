@@ -52,7 +52,7 @@ jobs:
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
         mkdir -p data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-        cp output/models/*.csv output/models/*.json data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
+        cp -rf output/models/* data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
     - uses: actions/upload-artifact@v4
       with:
         name: s4-mod-lgbm-cv-v1-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
@@ -89,7 +89,7 @@ jobs:
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
         mkdir -p data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-        cp output/models/*.csv output/models/*.json data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
+        cp -rf output/models/* data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
     - uses: actions/upload-artifact@v4
       with:
         name: s4-mod-lgbm-cv-v2-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
@@ -118,7 +118,7 @@ jobs:
     - name: Select best model
       run: |
         python src/select_model.py
-        mkdir -p data/models && cp output/*.json data/models/
+        mkdir -p data/models && cp -rf output/* data/models/
     - uses: actions/upload-artifact@v4
       with:
         name: s4-mod-lgbm-v1-parameter
@@ -147,7 +147,7 @@ jobs:
     - name: Select best model
       run: |
         python src/select_model.py
-        mkdir -p data/models && cp output/*.json data/models/
+        mkdir -p data/models && cp -rf output/* data/models/
     - uses: actions/upload-artifact@v4
       with:
         name: s4-mod-lgbm-v2-parameter
