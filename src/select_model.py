@@ -20,8 +20,8 @@ def main(args):
     # remove unselected results
     for f in files:
         if f != df['folder'].tolist()[idx]:
+            print('removing unselected result: ', f[:-12], df['folder'].tolist()[idx])
             shutil.rmtree(f[:-12]) 
-            print('removing unselected result: ', f[:-12])
 
 if __name__ == '__main__':
     
