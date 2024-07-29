@@ -48,7 +48,7 @@ jobs:
       run: |
         wget https://github.com/haroldmei/ml-automation/releases/download/$MODEL_VERSION/$MODEL_NAME.zip > /dev/null
         unzip $MODEL_NAME.zip
-        mv $MODEL_NAME output
+        mv $MODEL_NAME/models output
         ls output
 
     - name: execute py script, s6-mod-lgbm-pred
