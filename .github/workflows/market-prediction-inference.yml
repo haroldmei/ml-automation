@@ -18,6 +18,8 @@ on:
 env:
   MODEL_VERSION: smp-lgbm-v0.11
   MODEL_NAME: s5-mod-lgbm
+  FEATURE_VERSION: smp-fe-v0.02
+  FEATURE_TYPE: v1
 
 jobs:
 
@@ -34,6 +36,12 @@ jobs:
     - name: Install Packages and Python dependencies
       run: |
         python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
+
+    - name: Download features
+      run: |
+        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-$FEATURE_TYPE.tar.gz > /dev/null
+        tar xf s3-fe-$FEATURE_TYPE.tar.gz
+        mv s3-fe-$FEATURE_TYPE output
 
     - name: Download model
       run: |
