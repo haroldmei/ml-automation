@@ -42,12 +42,14 @@ jobs:
         wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-$FEATURE_TYPE.tar.gz > /dev/null
         tar xf s3-fe-$FEATURE_TYPE.tar.gz
         mv s3-fe-$FEATURE_TYPE output
+        ls output
 
     - name: Download model
       run: |
         wget https://github.com/haroldmei/ml-automation/releases/download/$MODEL_VERSION/$MODEL_NAME.zip > /dev/null
         unzip $MODEL_NAME.zip
         mv $MODEL_NAME output
+        ls output
 
     - name: execute py script, s6-mod-lgbm-pred
       run: |
