@@ -17,7 +17,7 @@ on:
 
 env:
   FEATURE_VERSION: smp-fe-v0.02
-  FEATURE_TYPE: v1
+  FEATURE_TYPE: v2
 
 jobs:
 
