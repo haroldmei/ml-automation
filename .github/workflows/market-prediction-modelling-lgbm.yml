@@ -17,10 +17,11 @@ on:
 
 env:
   FEATURE_VERSION: smp-fe-v0.02
+  FEATURE_TYPE: v1
 
 jobs:
 
-  s4-mod-lgbm-cv-v1:
+  s4-mod-lgbm-cv:
     if: ${{ inputs.step_id }} <= ${{ 4 }}
     strategy:
       matrix:
@@ -43,11 +44,11 @@ jobs:
 
     - name: Download features
       run: |
-        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-v1.tar.gz > /dev/null
-        tar xf s3-fe-v1.tar.gz
-        mv s3-fe-v1 output
+        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-$FEATURE_TYPE.tar.gz > /dev/null
+        tar xf s3-fe-$FEATURE_TYPE.tar.gz
+        mv s3-fe-$FEATURE_TYPE output
 
-    - name: execute py script, s4-mod-lgbm-cv-v1
+    - name: execute py script, s4-mod-lgbm-cv
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
@@ -55,54 +56,17 @@ jobs:
         cp -rf output/models/* data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
     - uses: actions/upload-artifact@v4
       with:
-        name: s4-mod-lgbm-cv-v1-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
+        name: s4-mod-lgbm-cv-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
         path: data/
 
-  s4-mod-lgbm-cv-v2:
-    if: ${{ inputs.step_id }} <= ${{ 4 }}
-    strategy:
-      matrix:
-        reg_alpha: [0, 1]
-        reg_lambda: [0, 1]
-        min_data_in_leaf: [0, 1]
+  s4-mod-lgbm-select-parameter:
     runs-on: ubuntu-latest
+    needs: s4-mod-lgbm-cv
     steps:
-    - uses: actions/checkout@v4
-      with:
-        repository: "haroldmei/stock-market-prediction"
-        token: ${{ secrets.PRIVATE_SSH_KEY }}
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10' 
-    - name: Install Packages and Python dependencies
-      run: |
-        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
-    
-    - name: Download features
-      run: |
-        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-v2.tar.gz > /dev/null
-        tar xf s3-fe-v2.tar.gz
-        mv s3-fe-v2 output
-        
-    - name: execute py script, s4-mod-lgbm-cv-v2
-      run: |
-        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        python models/lgbm.py --cv --reg_alpha=${{ matrix.reg_alpha }} --reg_lambda=${{ matrix.reg_lambda }} --min_data_in_leaf=${{ matrix.min_data_in_leaf }}
-        mkdir -p data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-        cp -rf output/models/* data/models-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-    - uses: actions/upload-artifact@v4
-      with:
-        name: s4-mod-lgbm-cv-v2-${{ matrix.reg_alpha }}-${{ matrix.reg_lambda }}-${{ matrix.min_data_in_leaf }}
-        path: data/
-
-  s4-mod-lgbm-v1-select-parameter:
-    runs-on: ubuntu-latest
-    needs: s4-mod-lgbm-cv-v1
-    steps:
-    - name: s4-mod-lgbm-v1-select-parameter
+    - name: s4-mod-lgbm-select-parameter
       uses: actions/upload-artifact/merge@v4
       with:
-        name: s4-mod-lgbm-v1-select-parameter
+        name: s4-mod-lgbm-select-parameter
     
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
@@ -113,7 +77,7 @@ jobs:
         python -m pip install --upgrade pip pandas joblib
     - uses: actions/download-artifact@v4
       with:
-        name: s4-mod-lgbm-v1-select-parameter
+        name: s4-mod-lgbm-select-parameter
         path: output/
     - name: Select best model
       run: |
@@ -121,41 +85,12 @@ jobs:
         mkdir -p data/models && cp -rf output/* data/models/
     - uses: actions/upload-artifact@v4
       with:
-        name: s4-mod-lgbm-v1-parameter
+        name: s4-mod-lgbm-parameter
         path: data/
 
-  s4-mod-lgbm-v2-select-parameter:
-    runs-on: ubuntu-latest
-    needs: s4-mod-lgbm-cv-v2
-    steps:
-    - name: s4-mod-lgbm-v2-select-parameter
-      uses: actions/upload-artifact/merge@v4
-      with:
-        name: s4-mod-lgbm-v2-select-parameter
-    
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10' 
-    - name: Install Packages and Python dependencies
-      run: |
-        python -m pip install --upgrade pip pandas joblib
-    - uses: actions/download-artifact@v4
-      with:
-        name: s4-mod-lgbm-v2-select-parameter
-        path: output/
-    - name: Select best model
-      run: |
-        python src/select_model.py
-        mkdir -p data/models && cp -rf output/* data/models/
-    - uses: actions/upload-artifact@v4
-      with:
-        name: s4-mod-lgbm-v2-parameter
-        path: data/
-
-  s5-mod-lgbm-v1:
+  s5-mod-lgbm:
     if: ${{ inputs.step_id }} <= ${{ 5 }}
-    needs: s4-mod-lgbm-v1-select-parameter
+    needs: s4-mod-lgbm-select-parameter
 
     runs-on: ubuntu-latest
     steps:
@@ -172,14 +107,14 @@ jobs:
 
     - uses: actions/download-artifact@v4
       with:
-        name: s4-mod-lgbm-v1-parameter
+        name: s4-mod-lgbm-parameter
         path: output/
     - name: Download features
       run: |
-        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-v1.tar.gz > /dev/null
-        tar xf s3-fe-v1.tar.gz > /dev/null
-        mv s3-fe-v1/* output/
-    - name: execute py script, s5-mod-lgbm-v1
+        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-$FEATURE_TYPE.tar.gz > /dev/null
+        tar xf s3-fe-$FEATURE_TYPE.tar.gz > /dev/null
+        mv s3-fe-$FEATURE_TYPE/* output/
+    - name: execute py script, s5-mod-lgbm
       run: |
         export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
         python models/lgbm.py
@@ -187,48 +122,12 @@ jobs:
         cp -r output/models/* data/models
     - uses: actions/upload-artifact@v4
       with:
-        name: s5-mod-lgbm-v1
-        path: data/
-
-  s5-mod-lgbm-v2:
-    if: ${{ inputs.step_id }} <= ${{ 5 }}
-    needs: s4-mod-lgbm-v2-select-parameter
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        repository: "haroldmei/stock-market-prediction"
-        token: ${{ secrets.PRIVATE_SSH_KEY }}
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10' 
-    - name: Install Packages and Python dependencies
-      run: |
-        python -m pip install --upgrade pip pandas joblib yfinance==0.2.28 matplotlib numpy scipy vectorbt PyPortfolioOpt seaborn lightgbm scikit-learn tsfresh
-
-    - uses: actions/download-artifact@v4
-      with:
-        name: s4-mod-lgbm-v2-parameter
-        path: output/
-    - name: Download features
-      run: |
-        wget https://github.com/haroldmei/ml-automation/releases/download/$FEATURE_VERSION/s3-fe-v2.tar.gz > /dev/null
-        tar xf s3-fe-v2.tar.gz > /dev/null
-        mv s3-fe-v2/* output/
-    - name: execute py script, s5-mod-lgbm-v2
-      run: |
-        export PYTHONPATH=/home/runner/work/ml-automation/ml-automation/
-        python models/lgbm.py
-        mkdir -p data/models
-        cp -r output/models/* data/models
-    - uses: actions/upload-artifact@v4
-      with:
-        name: s5-mod-lgbm-v2
+        name: s5-mod-lgbm
         path: data/
 
   release:
     name: Release Models
-    needs: [s5-mod-lgbm-v1, s5-mod-lgbm-v2]
+    needs: [s5-mod-lgbm]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -236,19 +135,13 @@ jobs:
       
     - uses: actions/download-artifact@v4
       with:
-        name: s5-mod-lgbm-v1
-        path: s5-mod-lgbm-v1/
-
-    - uses: actions/download-artifact@v4
-      with:
-        name: s5-mod-lgbm-v2
-        path: s5-mod-lgbm-v2/
+        name: s5-mod-lgbm
+        path: s5-mod-lgbm/
 
     - name: Build project # This would actually build your project, using zip for an example artifact
       run: |
-        ls s5-mod-lgbm-v2/
-        tar -czf s5-mod-lgbm-v2.tar.gz s5-mod-lgbm-v2
-        tar -czf s5-mod-lgbm-v1.tar.gz s5-mod-lgbm-v1
+        ls s5-mod-lgbm/
+        tar -czf s5-mod-lgbm.tar.gz s5-mod-lgbm
 
     - name: Create Release
       id: create_release
@@ -265,24 +158,13 @@ jobs:
         draft: false
         prerelease: false
         
-    - name: Upload Release Asset s5-mod-lgbm-v1
-      id: upload-release-asset-s5-mod-lgbm-v1
+    - name: Upload Release Asset s5-mod-lgbm
+      id: upload-release-asset-s5-mod-lgbm
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./s5-mod-lgbm-v1.tar.gz
-        asset_name: s5-mod-lgbm-v1.tar.gz
-        asset_content_type: application/zip
-        
-    - name: Upload Release Asset s5-mod-lgbm-v2
-      id: upload-release-asset-s5-mod-lgbm-v2
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./s5-mod-lgbm-v2.tar.gz
-        asset_name: s5-mod-lgbm-v2.tar.gz
+        asset_path: ./s5-mod-lgbm.tar.gz
+        asset_name: s5-mod-lgbm.tar.gz
         asset_content_type: application/zip
