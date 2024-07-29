@@ -246,9 +246,10 @@ jobs:
 
     - name: Build project # This would actually build your project, using zip for an example artifact
       run: |
+        ls s5-mod-lgbm-v1/
         ls s5-mod-lgbm-v2/
-        tar -czf s5-mod-lgbm-v2.tar.gz s5-mod-lgbm-v2
-        tar -czf s5-mod-lgbm-v1.tar.gz s5-mod-lgbm-v1
+        #tar -czf s5-mod-lgbm-v2.tar.gz s5-mod-lgbm-v2
+        #tar -czf s5-mod-lgbm-v1.tar.gz s5-mod-lgbm-v1
 
     - name: Create Release
       id: create_release
@@ -272,9 +273,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./s5-mod-lgbm-v1.tar.gz
-        asset_name: s5-mod-lgbm-v1.tar.gz
-        asset_content_type: application/zip
+        asset_path: ./s5-mod-lgbm-v1
+        asset_name: s5-mod-lgbm-v1
+        #asset_content_type: application/zip
         
     - name: Upload Release Asset s5-mod-lgbm-v2
       id: upload-release-asset-s5-mod-lgbm-v2
@@ -283,6 +284,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PRIVATE_SSH_KEY }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./s5-mod-lgbm-v2.tar.gz
-        asset_name: s5-mod-lgbm-v2.tar.gz
-        asset_content_type: application/zip
+        asset_path: ./s5-mod-lgbm-v2
+        asset_name: s5-mod-lgbm-v2
+        #asset_content_type: application/zip
