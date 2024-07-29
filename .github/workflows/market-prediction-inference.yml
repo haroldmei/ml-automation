@@ -1,5 +1,5 @@
 # This is a basic workflow that is manually triggered
-name: Market prediction modelling lgbm
+name: Market prediction inference pipeline
 
 on:
   workflow_dispatch:
