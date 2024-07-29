@@ -90,7 +90,7 @@ jobs:
 
   release:
     name: Release Models
-    needs: [s7-mod-lgbm]
+    needs: [s7-mod-lgbm-bt]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
