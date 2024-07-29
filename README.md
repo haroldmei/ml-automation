@@ -26,6 +26,12 @@ Overview diagram:
 
 ### Stock market prediction
 
+#### AAPL crests & troughs prediction
+![AAPL Crests and Troughs prediction](https://drive.google.com/uc?id=1t_bIRcFwMmc5US04fvc8CO0KkxE4DStz)
+
+#### Backtest NASDAQ stocks
+[Backtest NASDAQ stocks](https://docs.google.com/spreadsheets/d/1RZv5LuZ0fv8o-Xw0CaTOeEFDGK3OQd42yCVFn1bT-GY)
+
 ### Australia property listing data analysis
 
 ### Australia housing market prediction
