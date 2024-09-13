@@ -1,0 +1,1 @@
+{"reg_alpha":5.0,"reg_lambda":5.2,"min_data_in_leaf":1005.0,"num_leaves":128.0,"colsample_bytree":0.3,"mean_auc":0.9268560339,"epochs":48.0}
